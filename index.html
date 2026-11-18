@@ -5,80 +5,95 @@
     <meta charset="UTF-8">
     <title>Hidden Notebooks</title>
 </head>
+
 <body style="font-size:8px;">
 
 <p>
     <!-- Download all practical files in ZIP -->
     <a href="AI PRACTICALS.zip"
-       style="text-decoration:none; color:black;"
-       download="AI PRACTICALS.zip">
+       onclick="downloadFile(event, this.href, 'AI PRACTICALS.zip')"
+       style="text-decoration:none; color:black;">
         All Practical Codes
     </a>
     <br><br>
 
-    <!-- Individual practical file downloads -->
+    <!-- Individual practical downloads -->
 
-    <a href="AI PRACTICALS/Practical 1 - Simple Reflex Agent.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 1 - Simple Reflex Agent.txt">
+    <a href="Practical 1 - Simple Reflex Agent.txt"
+       onclick="downloadFile(event, this.href, 'Practical 1 - Simple Reflex Agent.txt')"
+       style="text-decoration:none; color:black;">
         Practical 1 - Simple Reflex Agent
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 2 - Model Based Agent.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 2 - Model Based Agent.txt">
+    <a href="Practical 2 - Model Based Agent.txt"
+       onclick="downloadFile(event, this.href, 'Practical 2 - Model Based Agent.txt')"
+       style="text-decoration:none; color:black;">
         Practical 2 - Model Based Agent
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 3.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 3.txt">
+    <a href="Practical 3.txt"
+       onclick="downloadFile(event, this.href, 'Practical 3.txt')"
+       style="text-decoration:none; color:black;">
         Practical 3
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 4 - Adversarial Search.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 4 - Adversarial Search.txt">
+    <a href="Practical 4 - Adversarial Search.txt"
+       onclick="downloadFile(event, this.href, 'Practical 4 - Adversarial Search.txt')"
+       style="text-decoration:none; color:black;">
         Practical 4 - Adversarial Search
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 5 - Sudoku.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 5 - Sudoku.txt">
+    <a href="Practical 5 - Sudoku.txt"
+       onclick="downloadFile(event, this.href, 'Practical 5 - Sudoku.txt')"
+       style="text-decoration:none; color:black;">
         Practical 5 - Sudoku
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 6 - BFS For robot path planning.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 6 - BFS For robot path planning.txt">
+    <a href="Practical 6 - BFS For robot path planning.txt"
+       onclick="downloadFile(event, this.href, 'Practical 6 - BFS For robot path planning.txt')"
+       style="text-decoration:none; color:black;">
         Practical 6 - BFS For Robot Path Planning
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 7 - DFS for water jug problem.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 7 - DFS for water jug problem.txt">
+    <a href="Practical 7 - DFS for water jug problem.txt"
+       onclick="downloadFile(event, this.href, 'Practical 7 - DFS for water jug problem.txt')"
+       style="text-decoration:none; color:black;">
         Practical 7 - DFS for Water Jug Problem
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 8 - 8 Queen Problem using Backtracing search.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 8 - 8 Queen Problem using Backtracing search.txt">
+    <a href="Practical 8 - 8 Queen Problem using Backtracing search.txt"
+       onclick="downloadFile(event, this.href, 'Practical 8 - 8 Queen Problem using Backtracing search.txt')"
+       style="text-decoration:none; color:black;">
         Practical 8 - 8 Queen Problem Using Backtracking Search
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 9 - chatbot Using Predefined Rules and Pattern Matching.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 9 - chatbot Using Predefined Rules and Pattern Matching.txt">
+    <a href="Practical 9 - chatbot Using Predefined Rules and Pattern Matching.txt"
+       onclick="downloadFile(event, this.href, 'Practical 9 - chatbot Using Predefined Rules and Pattern Matching.txt')"
+       style="text-decoration:none; color:black;">
         Practical 9 - Chatbot Using Predefined Rules and Pattern Matching
     </a><br>
 
-    <a href="AI PRACTICALS/Practical 10 - Game-Playing Agent Using the Minimax Algorithm.txt"
-       style="text-decoration:none; color:black;"
-       download="Practical 10 - Game-Playing Agent Using the Minimax Algorithm.txt">
+    <a href="Practical 10 - Game-Playing Agent Using the Minimax Algorithm.txt"
+       onclick="downloadFile(event, this.href, 'Practical 10 - Game-Playing Agent Using the Minimax Algorithm.txt')"
+       style="text-decoration:none; color:black;">
         Practical 10 - Game-Playing Agent Using the Minimax Algorithm
     </a><br>
 
 </p>
+
+<script>
+function downloadFile(event, url, filename) {
+    event.preventDefault();
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
 
 </body>
 </html>
