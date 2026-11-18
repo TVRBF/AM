@@ -1,0 +1,182 @@
+1. Aim: To implement a Model-Based Agent that maintains an internal model of a grid world and navigates from the start cell to the goal cell while avoiding obstacles.
+
+2. Objectives
+	1. Understand the concept of a Model-Based Agent.
+	2. Represent a grid with obstacles, start and goal positions.
+	3. Sense neighbouring cells.
+	4. Maintain an internal model of discovered cells.
+	5. Use memory to avoid repeated cells and backtrack from dead ends.
+
+3. Theory 
+
+	A Model-Based Agent is an intelligent agent that maintains an internal memory of its environment.
+	It cannot see the complete environment at once. It senses only nearby cells and stores the information in its internal model.
+	
+	It uses:
+	- Model: Stores whether a cell is free or blocked.
+	- Visited: Stores cells already visited.
+	- Stack: Stores the path to help the agent backtrack.
+	Unlike a Simple Reflex Agent, it uses memory to make decisions.
+
+4. Algorithm
+	1. Start.
+	2. Initialize the grid, start position and goal position.
+	3. Create an empty model, visited set and path stack.
+	4. Sense the four neighbouring cells.
+	5. Update the internal model.
+	6. If the goal is reached, stop.
+	7. Select an unvisited free neighbour closest to the goal.
+	8. Move to that cell and mark it visited.
+	9. If no unvisited neighbour is available, backtrack using the stack.
+	10. Display the final map and statistics.
+
+5. Python Program
+
+
+GRID = [
+    "S . . # . .",
+    ". # . # . #",
+    ". # . . . .",
+    ". . # # # .",
+    "# # . . . G"
+]
+
+GRID = [row.split() for row in GRID]
+ROWS, COLS = len(GRID), len(GRID[0])
+
+MOVES = {
+    "UP": (-1, 0),
+    "RIGHT": (0, 1),
+    "DOWN": (1, 0),
+    "LEFT": (0, -1)
+}
+
+class Environment:
+    def __init__(self, grid):
+        self.grid = grid
+        for r in range(ROWS):
+            for c in range(COLS):
+                if grid[r][c] == "S":
+                    self.start = (r, c)
+                if grid[r][c] == "G":
+                    self.goal = (r, c)
+
+    def is_free(self, pos):
+        r, c = pos
+        return 0 <= r < ROWS and 0 <= c < COLS and self.grid[r][c] != "#"
+
+    def percept(self, pos):
+        return {
+            m: self.is_free((pos[0] + d[0], pos[1] + d[1]))
+            for m, d in MOVES.items()
+        }
+
+
+class ModelBasedAgent:
+    def __init__(self, start, goal):
+        self.pos = start
+        self.goal = goal
+        self.model = {}
+        self.visited = {start}
+        self.stack = [start]
+        self.path = [start]
+        self.backtracking = False
+
+    def update_model(self, percept):
+        for m, free in percept.items():
+            cell = (
+                self.pos[0] + MOVES[m][0],
+                self.pos[1] + MOVES[m][1]
+            )
+            self.model[cell] = "free" if free else "wall"
+
+    def choose_action(self):
+        options = []
+
+        for m, d in MOVES.items():
+            nxt = (self.pos[0] + d[0], self.pos[1] + d[1])
+
+            if self.model.get(nxt) == "free" and nxt not in self.visited:
+                dist = abs(nxt[0] - self.goal[0]) + abs(nxt[1] - self.goal[1])
+                options.append((dist, m, nxt))
+
+        if options:
+            options.sort()
+            _, m, nxt = options[0]
+            self.stack.append(nxt)
+            self.backtracking = False
+            return m, nxt
+
+        if len(self.stack) > 1:
+            self.stack.pop()
+            back = self.stack[-1]
+            self.backtracking = True
+
+            for m, d in MOVES.items():
+                if (self.pos[0] + d[0], self.pos[1] + d[1]) == back:
+                    return m, back
+
+        return None, self.pos
+
+    def step(self, env):
+        self.update_model(env.percept(self.pos))
+        action, nxt = self.choose_action()
+
+        if action:
+            self.pos = nxt
+            self.visited.add(nxt)
+            self.path.append(nxt)
+
+        return action
+
+
+def show(env, agent):
+    for r in range(ROWS):
+        line = []
+
+        for c in range(COLS):
+            if (r, c) == agent.pos:
+                line.append("A")
+            elif env.grid[r][c] in "SG#":
+                line.append(env.grid[r][c])
+            elif (r, c) in agent.visited:
+                line.append("*")
+            else:
+                line.append(".")
+
+        print(" ".join(line))
+    print()
+
+
+env = Environment(GRID)
+agent = ModelBasedAgent(env.start, env.goal)
+
+print("Initial Environment")
+show(env, agent)
+
+steps = 0
+
+while agent.pos != env.goal and steps < 100:
+    action = agent.step(env)
+
+    if action is None:
+        print("Agent has no further moves.")
+        break
+
+    steps += 1
+    note = " (dead end -> backtrack)" if agent.backtracking else ""
+
+    print(f"Step {steps}: Action = {action} -> Position = {agent.pos}{note}")
+
+print("\nFinal Environment")
+show(env, agent)
+
+print("Goal reached!" if agent.pos == env.goal else "Goal NOT reachable.")
+print("Total moves:", steps)
+print("Cells visited:", len(agent.visited))
+print("Cells in internal model:", len(agent.model))
+
+6. Conclusion:
+
+	The Model-Based Agent was successfully implemented using Python. It maintains an internal model, remembers visited cells and uses backtracking to navigate through obstacles and 	reach the goal.
+

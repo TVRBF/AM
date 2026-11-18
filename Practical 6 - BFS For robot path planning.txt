@@ -1,0 +1,115 @@
+1. Aim: To solve a robot path-planning problem on a grid map using Breadth First Search (BFS) and obtain the shortest path from the start to the goal.
+
+2. Objectives: 
+	1. Understand planning as a search problem.
+	2. Understand how BFS works.
+	3. Create a grid map with obstacles.
+	4. Implement BFS using a queue.
+	5. Find the shortest path and count explored nodes.
+
+3. Theory 
+
+Breadth First Search (BFS) is a search algorithm that explores nodes level by level.
+- It uses a FIFO queue (First In, First Out).
+- It checks Up, Down, Left and Right directions.
+- It avoids obstacles and already visited cells.
+- It finds the shortest path when every move has equal cost.
+Example: A robot starts at S and must reach G without crossing obstacles.
+
+3. Algorithm
+	1. Start.
+	2. Create an empty queue and insert the start cell.	
+	3. Mark the start cell as visited.
+	4. Remove the first cell from the queue.
+	5. If it is the goal, create the path using parent links.
+	6. Otherwise, check its Up, Down, Left and Right neighbours.
+	7. Add valid and unvisited neighbours to the queue.
+	8. Repeat until the goal is found or the queue becomes empty.
+	9. Display the path, path length and explored nodes.
+	10. Stop.
+
+4. Python Code
+
+
+from collections import deque
+
+grid = [
+    ['S', '.', '.', '#', '.', '.', '.'],
+    ['.', '#', '.', '#', '.', '#', '.'],
+    ['.', '#', '.', '.', '.', '#', '.'],
+    ['.', '.', '#', '#', '.', '.', '.'],
+    ['#', '.', '.', '.', '.', '#', 'G']
+]
+
+rows = len(grid)
+cols = len(grid[0])
+
+start = (0, 0)
+goal = (4, 6)
+
+queue = deque([start])
+visited = {start}
+parent = {start: None}
+
+directions = [
+    (-1, 0),
+    (1, 0),
+    (0, -1),
+    (0, 1)
+]
+
+explored = 0
+
+while queue:
+    current = queue.popleft()
+    explored += 1
+
+    if current == goal:
+        break
+
+    for dr, dc in directions:
+        nr = current[0] + dr
+        nc = current[1] + dc
+        next_cell = (nr, nc)
+
+        if (0 <= nr < rows and
+            0 <= nc < cols and
+            grid[nr][nc] != '#' and
+            next_cell not in visited):
+
+            visited.add(next_cell)
+            parent[next_cell] = current
+            queue.append(next_cell)
+
+if goal in parent:
+    path = []
+    current = goal
+
+    while current is not None:
+        path.append(current)
+        current = parent[current]
+
+    path.reverse()
+
+    print("Path found:", path)
+    print("Path length:", len(path) - 1)
+
+    for r, c in path:
+        if grid[r][c] == '.':
+            grid[r][c] = 'o'
+
+    print("\nMap with path:")
+
+    for row in grid:
+        print(" ".join(row))
+
+    print("Nodes explored:", explored)
+
+else:
+    print("No path exists")
+
+
+6. Conclusion:
+	
+	BFS was successfully used to find the shortest path from the start to the goal in a grid map. It found a path of 10 moves 	after exploring 24 cells. BFS guarantees the shortest path when all moves have equal cost.
+	

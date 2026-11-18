@@ -1,0 +1,116 @@
+1. Aim: To develop a rule-based chatbot that understands user input using pattern matching and gives predefined responses.
+
+2. Objectives
+	1. To understand the working of rule-based chatbots.
+	2. To learn pattern matching using regular expressions in Python.
+	3. To create predefined questions and answers.
+	4. To extract information such as the user's name.
+	5. To handle unknown inputs and exit commands.
+
+3. Theory
+A chatbot is a computer program that communicates with users through text.
+A Rule-Based Chatbot uses predefined rules and responses to answer user questions.
+Pattern Matching: It checks whether the user's input matches a predefined pattern.
+Regular Expression (Regex): It is used to search for specific words or patterns in text.
+
+Working:
+	1. User enters a message.
+	2. Chatbot checks the message against predefined rules.
+	3. If a pattern matches, it gives the related response.
+	4. If no pattern matches, it gives a default response.
+	5. If the user types bye, the chatbot stops.
+
+4. Algorithm
+
+	1. Start.
+	2. Import the required libraries.
+	3. Define the list of rules and responses.
+	4. Display the chatbot welcome message.
+	5. Accept input from the user.
+	6. Convert input into lowercase.
+	7. Check the input against predefined patterns.
+	8. If a pattern matches, display the related response.
+	9. If no pattern matches, display a default response.
+	10. Repeat the process until the user enters an exit keyword.
+	11. Stop.
+
+5. Python Program
+
+
+import re
+import random
+
+RULES = [
+    (r"\b(hi|hello|hey)\b",
+     ["Hello! How can I help you today?",
+      "Hi there! What can I do for you?"]),
+
+    (r"\bmy name is (\w+)",
+     ["Nice to meet you, {0}! How can I help you?"]),
+
+    (r"\bhow are you\b",
+     ["I'm just a program, but I'm working fine. How about you?"]),
+
+    (r"\b(admission|apply)\b",
+     ["Admissions are open through the CAP process. Please visit the college office for details."]),
+
+    (r"\b(fee|fees)\b",
+     ["Fee details are available at the accounts section or on the college website."]),
+
+    (r"\b(timing|timings|time)\b",
+     ["College timings are 9:00 AM to 4:30 PM, Monday to Saturday."]),
+
+    (r"\bi (?:feel|am) (sad|happy|tired|stressed)\b",
+     ["Why do you feel {0}?",
+      "I see. Tell me more about why you are {0}."]),
+
+    (r"\bwhat is (ai|artificial intelligence)\b",
+     ["AI is the field of making machines perform tasks that normally need human intelligence."]),
+
+    (r"\b(bye|goodbye|exit|quit)\b",
+     ["Goodbye! Have a great day."]),
+]
+
+DEFAULT = [
+    "Sorry, I did not understand that. Could you rephrase?",
+    "Can you tell me more?"
+]
+
+
+def respond(text):
+    text = text.lower().strip()
+
+    for pattern, replies in RULES:
+        m = re.search(pattern, text)
+
+        if m:
+            groups = [
+                g.capitalize() if "name" in pattern else g
+                for g in m.groups()
+            ]
+
+            return random.choice(replies).format(*groups)
+
+    return random.choice(DEFAULT)
+
+
+def main():
+    print("Chatbot: Hi! I am a simple rule-based chatbot. Type 'bye' to exit.")
+
+    while True:
+        user = input("You     : ")
+
+        reply = respond(user)
+
+        print("Chatbot:", reply)
+
+        if re.search(r"\b(bye|goodbye|exit|quit)\b", user.lower()):
+            break
+
+
+if __name__ == "__main__":
+    main()
+
+6. Conclusion:
+
+A simple rule-based chatbot was successfully developed using predefined rules and regular expressions. It responds to greetings, college enquiries and user emotions. It also handles unknown inputs and exit commands.S

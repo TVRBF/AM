@@ -1,0 +1,103 @@
+1. Aim: To implement the Minimax Adversarial Search algorithm with Alpha-Beta Pruning and reduce the number of nodes evaluated without changing the result.
+
+2. Objectives
+	1. Understand adversarial search in two-player games.
+	2. Understand MAX and MIN players.
+	3. Understand Alpha and Beta values.
+	4. Implement Alpha-Beta Pruning using Python.
+	5. Compare evaluated and pruned nodes.
+
+3. Theory:
+
+Adversarial Search is used in games where two players have opposite goals.
+- MAX player: Tries to get the highest value.
+- MIN player: Tries to get the lowest value.
+Minimax Algorithm: Selects the best possible move by checking the game tree.
+
+Alpha-Beta Pruning: It skips unnecessary branches that cannot change the final result.
+- Alpha = Best value for MAX.
+- Beta = Best value for MIN.
+- Pruning condition: beta <= alpha.
+
+4. Algorithm 
+	1. Start.
+	2. Create the game tree.
+	3. Initialize alpha to negative infinity and beta to positive infinity.
+	4. Check whether the current node is MAX or MIN.
+	5. MAX selects the highest value.
+	6. MIN selects the lowest value.
+	7. Update alpha and beta values.
+	8. If beta is less than or equal to alpha, prune the remaining branches.
+	9. Display the optimal value and number of pruned nodes.
+	10. Stop.
+
+5. Python Program
+
+
+import math
+
+tree = [[[3, 5], [6, 9]], [[1, 2], [0, -1]]]
+
+visited = 0
+pruned = 0
+
+def alphabeta(node, alpha, beta, is_max):
+    global visited, pruned
+
+    if not isinstance(node, list):
+        visited += 1
+        return node
+
+    if is_max:
+        best = -math.inf
+
+        for i, child in enumerate(node):
+            value = alphabeta(child, alpha, beta, False)
+            best = max(best, value)
+            alpha = max(alpha, best)
+
+            if beta <= alpha:
+                pruned += sum(count_leaves(x) for x in node[i+1:])
+                print("Branch Pruned")
+                break
+
+        return best
+
+    else:
+        best = math.inf
+
+        for i, child in enumerate(node):
+            value = alphabeta(child, alpha, beta, True)
+            best = min(best, value)
+            beta = min(beta, best)
+
+            if beta <= alpha:
+                pruned += sum(count_leaves(x) for x in node[i+1:])
+                print("Branch Pruned")
+                break
+
+        return best
+
+
+def count_leaves(node):
+    if not isinstance(node, list):
+        return 1
+
+    total = 0
+
+    for child in node:
+        total += count_leaves(child)
+
+    return total
+
+
+result = alphabeta(tree, -math.inf, math.inf, True)
+
+print("Optimal Value:", result)
+print("Total Leaf Nodes:", count_leaves(tree))
+print("Leaf Nodes Evaluated:", visited)
+print("Leaf Nodes Pruned:", pruned)
+
+6. Conclusion:
+
+	Alpha-Beta Pruning was successfully implemented using Python. It found the optimal value of 5 by 	evaluating only 5 out of 8 leaf nodes. It pruned 3 unnecessary leaf nodes without changing the final 	result.

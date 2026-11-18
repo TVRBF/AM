@@ -1,0 +1,164 @@
+1. Aim: To develop a Tic-Tac-Toe playing agent that uses the Minimax algorithm to select the optimal move against a human opponent.
+
+2. Objectives
+	1. To understand game playing as an adversarial search problem.
+	2. To understand the Minimax algorithm.
+	3. To implement Minimax recursively in Python.
+	4. To develop a computer agent that never loses.
+	5. To count the game-tree nodes evaluated.
+
+3. Theory
+
+Tic-Tac-Toe: It is a two-player game played on a 3×3 board.
+- Computer plays with X.
+- Human plays with O.
+- The player who makes three marks in a row, column or diagonal wins.
+
+Minimax Algorithm: Minimax is a decision-making algorithm used in two-player games. It selects the best possible move by checking possible future moves.
+- MAX player tries to get the highest score.
+- MIN player tries to get the lowest score.
+- X win = +1
+- O win = -1
+- Draw = 0
+The computer uses Minimax to select the best move.
+
+4. Algorithm
+	1. Start.
+	2. Create an empty 3×3 board.
+	3. Set computer as X (MAX) and human as O (MIN).
+	4. Check all empty cells for the computer's move.
+	5. Apply the Minimax algorithm to calculate the score.
+	6. Select the move with the highest score.
+	7. Display the board.
+	8. Accept the human move between 1 and 9.
+	9. Check whether the move is valid.
+	10. Repeat until a player wins or the board becomes full.
+	11. Display the final result.
+	12. Stop.
+
+5. Python Program
+
+
+# Experiment 10: Tic-Tac-Toe using Minimax Algorithm
+
+WINS = [
+    (0, 1, 2), (3, 4, 5), (6, 7, 8),
+    (0, 3, 6), (1, 4, 7), (2, 5, 8),
+    (0, 4, 8), (2, 4, 6)
+]
+
+nodes = 0
+
+
+def winner(b):
+    for a, c, d in WINS:
+        if b[a] != " " and b[a] == b[c] == b[d]:
+            return b[a]
+    return None
+
+
+def minimax(b, is_max):
+    global nodes
+    nodes += 1
+
+    w = winner(b)
+
+    if w == "X":
+        return 1
+    if w == "O":
+        return -1
+    if " " not in b:
+        return 0
+
+    scores = []
+
+    for i in range(9):
+        if b[i] == " ":
+            b[i] = "X" if is_max else "O"
+            scores.append(minimax(b, not is_max))
+            b[i] = " "
+
+    return max(scores) if is_max else min(scores)
+
+
+def best_move(b):
+    best, move = -2, None
+
+    for i in range(9):
+        if b[i] == " ":
+            b[i] = "X"
+            s = minimax(b, False)
+            b[i] = " "
+
+            if s > best:
+                best, move = s, i
+
+    return move
+
+
+def show(b):
+    for r in range(3):
+        print(" " + " | ".join(b[3 * r:3 * r + 3]))
+
+        if r < 2:
+            print("---+---+---")
+
+    print()
+
+
+def play():
+    global nodes
+
+    board = [" "] * 9
+
+    print("Tic-Tac-Toe: You = O, Computer (Minimax) = X. Enter cell 1-9.")
+    print("Cells are numbered:")
+    print(" 1 | 2 | 3")
+    print("---+---+---")
+    print(" 4 | 5 | 6")
+    print("---+---+---")
+    print(" 7 | 8 | 9\n")
+
+    turn = "X"
+
+    while True:
+
+        if turn == "X":
+            nodes = 0
+            m = best_move(board)
+            board[m] = "X"
+
+            print(f"Computer plays cell {m + 1} (game-tree nodes evaluated: {nodes})")
+            turn = "O"
+
+        else:
+            while True:
+                try:
+                    m = int(input("Your move (1-9): ")) - 1
+
+                    if 0 <= m < 9 and board[m] == " ":
+                        break
+
+                except ValueError:
+                    pass
+
+                print("Invalid move, try again.")
+
+            board[m] = "O"
+            turn = "X"
+
+        show(board)
+
+        w = winner(board)
+
+        if w or " " not in board:
+            print(f"Winner: {w}" if w else "Result: Draw")
+            break
+
+
+if __name__ == "__main__":
+    play()
+
+6. Conclusion:
+
+A Tic-Tac-Toe game-playing agent was successfully developed using the Minimax algorithm. The computer selects the best possible move and never loses against a human opponent. The game ends in a draw or computer victory.

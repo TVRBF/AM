@@ -1,0 +1,101 @@
+1. Aim: To solve the Water Jug problem using Depth First Search (DFS).
+
+2. Objectives
+	1. To understand the working of DFS.
+	2. To understand the Water Jug problem.
+	3. To implement Fill, Empty and Pour operations.
+	4. To use DFS for finding the solution.
+	5. To display the sequence of actions.
+
+3. Theory
+
+What is DFS?
+
+DFS stands for Depth First Search.
+- DFS is a searching algorithm.
+- It explores one path deeply before trying another path.
+- It uses a Stack (LIFO).
+- If a path fails, it goes back (Backtracking).
+- It is used in maze solving, puzzles and path finding.
+Water Jug Problem:
+
+We have two water jugs:
+- First jug capacity = 4 litres.
+- Second jug capacity = 3 litres.
+- We need exactly 2 litres of water in either jug.
+We can perform three operations:
+1. Fill – Fill a jug completely.
+2. Empty – Empty a jug completely.
+3. Pour – Transfer water from one jug to another.
+
+4. Algorithm
+
+	1. Start.
+	2. Set initial state as (0, 0).
+	3. Create a stack and insert the initial state.
+	4. Check whether either jug contains exactly 2 litres.
+	5. If the goal is reached, display the solution.
+	6. Generate new states using Fill, Empty and Pour operations.
+	7. Mark visited states.
+	8. Continue DFS until the goal is found.
+	9. Stop.
+
+5. Python Program
+
+
+CAP_X, CAP_Y, TARGET = 4, 3, 2
+
+def successors(state):
+    x, y = state
+
+    return [
+        ("Fill 4L jug", (CAP_X, y)),
+        ("Fill 3L jug", (x, CAP_Y)),
+        ("Empty 4L jug", (0, y)),
+        ("Empty 3L jug", (x, 0)),
+        ("Pour 4L -> 3L",
+         (x - min(x, CAP_Y - y), y + min(x, CAP_Y - y))),
+        ("Pour 3L -> 4L",
+         (x + min(y, CAP_X - x), y - min(y, CAP_X - x)))
+    ]
+
+
+def dfs(state, visited, path):
+    visited.add(state)
+
+    if state[0] == TARGET or state[1] == TARGET:
+        return path
+
+    for action, nxt in successors(state):
+        if nxt not in visited:
+            result = dfs(nxt, visited, path + [(action, nxt)])
+
+            if result is not None:
+                return result
+
+    return None
+
+
+visited = set()
+solution = dfs((0, 0), visited, [])
+
+print(f"Water Jug Problem: {CAP_X}L and {CAP_Y}L, Target = {TARGET}L")
+
+if solution is None:
+    print("No solution exists.")
+    print("States visited by DFS:", len(visited))
+
+else:
+    print(f"{'Step':<8}{'Action':<20}{'State (4L,3L)'}")
+    print(f"{0:<8}{'Start':<20}(0, 0)")
+
+    for i, (action, state) in enumerate(solution, 1):
+        print(f"{i:<8}{action:<20}{state}")
+
+    print("\nNumber of steps:", len(solution))
+    print("States visited by DFS:", len(visited))
+
+
+6. Conclusion:
+
+	The Water Jug problem was successfully solved using DFS. The algorithm found exactly 2 litres of water in the 3-litre jug 	in 6 steps. DFS uses a stack and backtracking to find the solution.

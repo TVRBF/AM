@@ -1,0 +1,182 @@
+1. Aim: To solve Sudoku puzzles as a Constraint Satisfaction Problem (CSP) using constraint propagation and backtracking search.
+
+2. Objectives:
+	1. Understand Constraint Satisfaction Problems.
+	2. Represent Sudoku using variables, domains and constraints.
+	3. Apply naked-single and hidden-single rules.
+	4. Use backtracking to solve the puzzle.
+	5. Display the solution and search nodes explored.
+
+3. Theory 
+
+Sudoku is a 9 × 9 puzzle divided into nine 3 × 3 boxes. We have to fill empty cells using digits 1 to 9.
+
+Rules:
+- Each row must contain digits 1 to 9 without repetition.
+- Each column must contain digits 1 to 9 without repetition.
+- Each 3 × 3 box must contain digits 1 to 9 without repetition.
+CSP (Constraint Satisfaction Problem): Sudoku is represented using variables, possible values (domains) and rules (constraints).
+
+Constraint Propagation: Removes impossible values from empty cells.
+- Naked Single: A cell has only one possible value.
+- Hidden Single: A digit can fit in only one cell of a row, column or box.
+Backtracking: If the puzzle cannot be solved using rules alone, the program tries a possible value. If it causes a problem, it goes back and tries another value.
+
+MRV: Selects the empty cell having the fewest possible values.
+
+4. Algorithm 
+	1. Start.
+	2. Read the Sudoku puzzle.	
+	3. Assign possible digits from 1 to 9 to empty cells.
+	4. Apply naked-single and hidden-single rules.
+	5. Check for contradictions.
+	6. If solved, display the solution.
+	7. Otherwise, select a cell with the fewest possible values (MRV).
+	8. Try each possible digit using backtracking.
+	9. Display the solution and search nodes.
+	10. Stop.
+
+5. Python Program
+
+
+digits = "123456789"
+rows = "ABCDEFGHI"
+cols = digits
+
+def cross(A, B):
+    return [a + b for a in A for b in B]
+
+
+squares = cross(rows, cols)
+
+unitlist = (
+    [cross(rows, c) for c in cols] +
+    [cross(r, cols) for r in rows] +
+    [cross(rs, cs) for rs in ("ABC", "DEF", "GHI")
+     for cs in ("123", "456", "789")]
+)
+
+units = {s: [u for u in unitlist if s in u] for s in squares}
+peers = {s: set(sum(units[s], [])) - {s} for s in squares}
+
+
+def eliminate(values, s, d):
+    if d not in values[s]:
+        return values
+
+    values[s] = values[s].replace(d, "")
+
+    if len(values[s]) == 0:
+        return False
+
+    if len(values[s]) == 1:
+        for p in peers[s]:
+            if not eliminate(values, p, values[s]):
+                return False
+
+    for u in units[s]:
+        places = [x for x in u if d in values[x]]
+
+        if len(places) == 0:
+            return False
+
+        if len(places) == 1:
+            if not assign(values, places[0], d):
+                return False
+
+    return values
+
+
+def assign(values, s, d):
+    others = values[s].replace(d, "")
+
+    for d2 in others:
+        if not eliminate(values, s, d2):
+            return False
+
+    return values
+
+
+def parse_grid(grid):
+    values = {s: digits for s in squares}
+
+    for s, d in zip(squares, grid):
+        if d in digits:
+            if not assign(values, s, d):
+                return False
+
+    return values
+
+
+nodes = 0
+
+
+def search(values):
+    global nodes
+    nodes += 1
+
+    if values is False:
+        return False
+
+    if all(len(values[s]) == 1 for s in squares):
+        return values
+
+    s = min(
+        (s for s in squares if len(values[s]) > 1),
+        key=lambda s: len(values[s])
+    )
+
+    for d in values[s]:
+        result = search(assign(values.copy(), s, d))
+
+        if result:
+            return result
+
+    return False
+
+
+def display(values):
+    for r in rows:
+        if r in "DG":
+            print("------+-------+------")
+
+        line = ""
+
+        for c in cols:
+            line += values[r + c] + " "
+
+            if c in "36":
+                line += "| "
+
+        print(line)
+
+    print()
+
+
+puzzle = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
+
+print("Input Sudoku:")
+display({s: (d if d in digits else ".")
+         for s, d in zip(squares, puzzle)})
+
+values = parse_grid(puzzle)
+
+if values is False:
+    print("Invalid Puzzle")
+else:
+    print("Solved by propagation alone:",
+          all(len(values[s]) == 1 for s in squares))
+
+    solution = search(values)
+
+    print("\nSudoku Solution:")
+    display(solution)
+
+    print("Search Nodes Explored:", nodes)
+    print("Valid Solution:",
+          all(set(solution[s] for s in u) == set(digits)
+              for u in unitlist))
+
+6. Conclusion:
+
+The Sudoku solver was successfully implemented using constraint propagation and backtracking. The program solved the given Sudoku puzzle by using naked-single, hidden-single and MRV techniques. It explored 26 search nodes and generated a valid solution.

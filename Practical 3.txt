@@ -1,0 +1,180 @@
+1. Aim: To implement the A* Search algorithm for solving the 8-puzzle problem using the Manhattan Distance heuristic.
+
+2. Objectives:
+	1. Understand the A* search algorithm.
+	2. Represent the 8-puzzle as a search problem.
+	3. Use Manhattan Distance to find the best path.
+	4. Check whether the puzzle is solvable.
+	5. Display the solution path and total cost.
+
+3. Theory:
+
+The 8-Puzzle Problem contains a 3 × 3 board with 8 numbered tiles and one blank space.
+
+The aim is to arrange the tiles in the correct order by moving the blank space.
+
+A Search* is an informed search algorithm. It selects the best path using this formula:
+\[
+f(n) = g(n) + h(n)
+\]
+
+- g(n) = Cost from the starting position.
+- h(n) = Estimated distance to the goal.
+- f(n) = Total estimated cost.
+Manhattan Distance: It calculates how far each tile is from its correct position.
+
+Initial state:	
+1  2  3
+_  4  6
+7  5  8
+
+Goal state:
+1  2  3
+4  5  6
+7  8  _
+
+4. Algorithm 
+	1. Start.
+	2. Define the initial and goal states.
+	3. Check whether the puzzle is solvable.
+	4. Calculate Manhattan Distance.
+	5. Apply A* Search using a priority queue.
+	6. Select the state with the lowest f(n) value.
+	7. Generate possible moves: Up, Down, Left and Right.	
+	8. Repeat until the goal state is reached.
+	9. Display the solution path and total cost.
+	10. Stop.
+
+5. Python Program 
+
+import heapq
+
+start = (1, 2, 3, 0, 4, 6, 7, 5, 8)
+goal = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+
+def manhattan(state):
+    distance = 0
+
+    for i in range(9):
+        tile = state[i]
+
+        if tile != 0:
+            j = goal.index(tile)
+            distance += abs(i // 3 - j // 3) + abs(i % 3 - j % 3)
+
+    return distance
+
+
+def solvable(state):
+    tiles = [x for x in state if x != 0]
+    inversions = 0
+
+    for i in range(len(tiles)):
+        for j in range(i + 1, len(tiles)):
+            if tiles[i] > tiles[j]:
+                inversions += 1
+
+    return inversions % 2 == 0
+
+
+def get_moves(state):
+    blank = state.index(0)
+    row, col = divmod(blank, 3)
+
+    moves = []
+
+    directions = [
+        ("Up", -1, 0),
+        ("Down", 1, 0),
+        ("Left", 0, -1),
+        ("Right", 0, 1)
+    ]
+
+    for name, dr, dc in directions:
+        r = row + dr
+        c = col + dc
+
+        if 0 <= r < 3 and 0 <= c < 3:
+            new_pos = r * 3 + c
+            new_state = list(state)
+
+            new_state[blank], new_state[new_pos] = new_state[new_pos], new_state[blank]
+
+            moves.append((name, tuple(new_state)))
+
+    return moves
+
+
+def astar(start):
+    queue = [(manhattan(start), 0, start)]
+    parent = {start: (None, None)}
+    costs = {start: 0}
+    visited = set()
+    expanded = 0
+
+    while queue:
+        f, g, state = heapq.heappop(queue)
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+        expanded += 1
+
+        if state == goal:
+            path = []
+            current = state
+
+            while parent[current][0] is not None:
+                previous, move = parent[current]
+                path.append((move, current))
+                current = previous
+
+            return path[::-1], expanded, g
+
+        for move, next_state in get_moves(state):
+            new_cost = g + 1
+
+            if next_state not in costs or new_cost < costs[next_state]:
+                costs[next_state] = new_cost
+                parent[next_state] = (state, move)
+
+                heapq.heappush(
+                    queue,
+                    (new_cost + manhattan(next_state), new_cost, next_state)
+                )
+
+    return None, expanded, 0
+
+
+def display(state):
+    for i in range(0, 9, 3):
+        print(*["_ " if x == 0 else str(x) for x in state[i:i+3]])
+    print()
+
+
+print("Initial State:")
+display(start)
+
+print("Goal State:")
+display(goal)
+
+if solvable(start):
+    print("Puzzle is Solvable")
+
+    path, expanded, cost = astar(start)
+
+    for i, (move, state) in enumerate(path, 1):
+        print("Step", i, ": Move", move)
+        display(state)
+
+    print("Moves:", [move for move, state in path])
+    print("Total Cost:", cost)
+    print("Nodes Expanded:", expanded)
+
+else:
+    print("Puzzle is NOT Solvable")
+
+6. Conclusion:
+
+	A* Search was successfully implemented for the 8-puzzle problem using the Manhattan Distance heuristic. The algorithm found the optimal solution 	in 3 moves and expanded 4 nodes.

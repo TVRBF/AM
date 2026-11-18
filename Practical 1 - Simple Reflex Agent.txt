@@ -1,0 +1,70 @@
+1. Aim: To design and implement a Simple Reflex Agent for the Vacuum Cleaner World using Python.\
+
+2. Objectives
+	1. To understand the concept of an Intelligent Agent.
+	2. To understand the working of a Simple Reflex Agent.
+	3. To implement a vacuum cleaner agent using Python.
+	4. To clean dirty locations using predefined rules.
+	5. To observe the agent's actions in different conditions.
+
+3. Theory
+	An Intelligent Agent is a system that observes its environment and performs actions to achieve a particular goal.
+	A Simple Reflex Agent selects an action based only on the current situation (percept). It uses predefined condition-action rules and does not remember previous actions.
+
+	In the Vacuum Cleaner World:
+	- There are two rooms: A and B.
+	- Each room can be Clean or Dirty.
+	- The vacuum cleaner can perform three actions: Suck, Move Left and Move Right.
+	Working rules:
+	Condition	Action
+	A is Dirty	Suck
+	A is Clean	Move Right
+	B is Dirty	Suck
+	B is Clean	Move Left
+
+4. Algorithm
+1. Start.
+2. Initialize two rooms A and B as Clean or Dirty.
+3. Set the initial position of the vacuum cleaner.
+4. Check the current room and its status.
+5. If the room is dirty, perform Suck.
+6. If the room is clean, move to the other room.
+7. Repeat the process for a fixed number of steps.
+8. Display the actions and final room status.
+9. Calculate the performance.
+10. Stop.
+
+5. Python Program
+
+
+rooms = {
+    "A": "Dirty",
+    "B": "Dirty"
+}
+
+position = "A"
+steps = 4
+
+for i in range(steps):
+    print("Current Position:", position)
+    print("Room Status:", rooms[position])
+
+    if rooms[position] == "Dirty":
+        rooms[position] = "Clean"
+        print("Action: Suck")
+    else:
+        if position == "A":
+            position = "B"
+            print("Action: Move Right")
+        else:
+            position = "A"
+            print("Action: Move Left")
+
+    print()
+
+print("Final Room Status:", rooms)
+print("Clean Rooms:", list(rooms.values()).count("Clean"))
+
+
+6. Conclusion:
+	The Simple Reflex Vacuum Cleaner Agent was successfully implemented using Python. It checks the current room status and performs actions using predefined rules. The agent successfully cleans dirty rooms and demonstrates the working of a Simple Reflex Agent.
